@@ -12,5 +12,8 @@ app.listen(PORT, () => {
     console.log('server running on port: ', PORT);
 })
 
-app.use('/api/usuario', require('./routes/Usuario.js'));
+app.use('/api/usuarios', require('./routes/Usuario.js'));
+app.use('/api/proyectos',require('./routes/Proyecto.js'))
+
 //crear la ruta proyectos 
+  

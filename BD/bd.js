@@ -19,7 +19,9 @@ const sequelize = new Sequelize(
     });
 
 const UsuarioModel = require('./Model/Usuario');
+const ProyectoModel = require('./Model/Proyecto');
 
+const Proyecto = ProyectoModel(sequelize, Sequelize);
 const Usuario = UsuarioModel(sequelize, Sequelize);
 
 sequelize.sync()
