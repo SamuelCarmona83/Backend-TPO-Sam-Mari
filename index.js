@@ -1,7 +1,10 @@
 const express = require('express');
-const {sequelize, Usuario} = require('./BD/bd.js'); //lo hizo chatgpt analizar luego este import supuestamente es para crear las tablas si no existe
-
+const cors = require('cors');
 const app = express();
+
+// Configura CORS para permitir todas las solicitudes desde cualquier origen
+app.use(cors()); // Permite solicitudes de cualquier dominio por defecto
+
 const PORT = 8080;
 app.use(express.json());
 
