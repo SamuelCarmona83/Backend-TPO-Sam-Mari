@@ -7,11 +7,11 @@ const sequelize = new Sequelize(
     'admin', // contraseña
     {
         host: 'localhost',  // Cambia 'localhost' si tu servidor no está en la misma máquina
-        dialect: 'mssql',   // Cambia de 'mysql' a 'mssql' para usar SQL Server
+        dialect: 'mssql',
         port: 1434,
         dialectOptions: {
             options: {
-                encrypt: false, // Asegúrate de que el cifrado está desactivado
+                encrypt: false,
                 trustServerCertificate: true // Esto desactiva la validación del certificado SSL
             }
         },
@@ -20,9 +20,25 @@ const sequelize = new Sequelize(
 
 const UsuarioModel = require('./Model/Usuario');
 const ProyectoModel = require('./Model/Proyecto');
+const UsuarioProyectoModel = require('./Model/UsuariosProyecto');
 
 const Proyecto = ProyectoModel(sequelize, Sequelize);
 const Usuario = UsuarioModel(sequelize, Sequelize);
+const UsuarioProyecto = UsuarioProyectoModel(sequelize, Sequelize);
+
+Usuario.hasMany(Proyecto, {
+    foreignkey: 'usuarioAdmin',
+    as: 'Proyectos administrados',
+    onDelete: 'CASCADE'
+});
+
+Proyecto.belongsTo({
+    foreignkey: 'usuarioAdmin',
+    as: 'administrador'
+});
+
+Usuario.belongsToMany(Proyecto, { through: UsuarioProyecto });
+Proyecto.belongsToMany(Usuario, { through: UsuarioProyecto });
 
 sequelize.sync()
     .then(() => {
@@ -35,4 +51,6 @@ sequelize.sync()
 module.exports = {
     sequelize,
     Usuario,
+    Proyecto,
+    UsuarioProyecto
 };
