@@ -32,14 +32,14 @@ const loginUsuario = async(req, res) =>{
     try{
         const usuario = await Usuario.findOne({where: {email}});
         if (!usuario) {
-            return res.status(404).json({ error: 'Usuario no encontrado' });
+            return res.status(404).json({ mensaje: 'Usuario no encontrado' });
         }
 
         if (clave != usuario.contraseña) {
-            return res.status(401).json({ error: 'Clave incorrecta' });
+            return res.status(401).json({ mensaje: 'Clave incorrecta' });
         }
 
-        res.json({ message: 'Inicio de sesión exitoso', usuario });
+        res.json({ mensaje: 'Inicio de sesión exitoso', usuario });
         console.log(usuario)
     } catch (error) {
         console.error('Error al iniciar sesión:', error);

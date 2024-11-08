@@ -8,6 +8,4 @@ router.get('/', UsuarioControlador.getUsuarios);
 router.get('/:id', UsuarioControlador.getUsuario);
 router.post('/login', UsuarioControlador.loginUsuario);
 
-
-
 module.exports = router;
