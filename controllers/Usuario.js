@@ -1,3 +1,4 @@
+const { where } = require('sequelize');
 const { Usuario } = require('../BD/bd');
 const traerTodosLosUsuarios = async () => await Usuario.findAll();
 const traerUsuario = async (userid) => await Usuario.findOne({ where: { ID: userid } });
@@ -25,8 +26,30 @@ const getUsuario = async(req, res)=>{
     
 }
 
+const loginUsuario = async(req, res) =>{
+    const {email, clave} = req.body;
+
+    try{
+        const usuario = await Usuario.findOne({where: {email}});
+        if (!usuario) {
+            return res.status(404).json({ error: 'Usuario no encontrado' });
+        }
+
+        if (clave != usuario.contraseña) {
+            return res.status(401).json({ error: 'Clave incorrecta' });
+        }
+
+        res.json({ message: 'Inicio de sesión exitoso', usuario });
+        console.log(usuario)
+    } catch (error) {
+        console.error('Error al iniciar sesión:', error);
+        res.status(500).json({ error: 'Error al iniciar sesión' });
+    }
+}
+
 
 module.exports = {
     getUsuarios,
-    getUsuario
+    getUsuario,
+    loginUsuario
 };

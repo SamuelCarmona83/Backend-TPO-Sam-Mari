@@ -5,8 +5,8 @@ const Usuario = require('../BD/Model/Usuario');
 const router = Router();
 
 router.get('/', UsuarioControlador.getUsuarios);
-
 router.get('/:id', UsuarioControlador.getUsuario);
+router.post('/login', UsuarioControlador.loginUsuario);
 
 
 

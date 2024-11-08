@@ -3,6 +3,7 @@ const {sequelize, Usuario} = require('./BD/bd.js'); //lo hizo chatgpt analizar l
 
 const app = express();
 const PORT = 8080;
+app.use(express.json());
 
 app.get('/', (req, res) => {
     res.send('welcome to my server');

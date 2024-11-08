@@ -32,7 +32,7 @@ Usuario.hasMany(Proyecto, {
     onDelete: 'CASCADE'
 });
 
-Proyecto.belongsTo({
+Proyecto.belongsTo(Usuario, {
     foreignkey: 'usuarioAdmin',
     as: 'administrador'
 });
