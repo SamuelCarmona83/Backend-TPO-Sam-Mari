@@ -57,7 +57,7 @@ const registrarUsuario = async(req, res) => {
             return res.status(400).json({ mensaje: 'El usuario ya está registrado' });
         }
 
-        const nuevoUsuario = Usuario.create({nombre: nombre, email: email, contraseña:clave, imagen: ""});
+        const nuevoUsuario = await Usuario.create({nombre: nombre, email: email, contraseña:clave, imagen: ""});
 
         res.status(201).json({
             mensaje: 'Usuario registrado exitosamente',

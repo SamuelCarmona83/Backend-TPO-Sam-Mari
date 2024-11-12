@@ -8,6 +8,8 @@ router.get('/', ProyectoControlador.getProyectos);
 
 router.get('/:id', ProyectoControlador.getProyecto);
 
+router.post('/crearProyecto', ProyectoControlador.crearProyecto)
+
 
 
 module.exports = router;

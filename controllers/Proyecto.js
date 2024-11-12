@@ -25,8 +25,34 @@ const getProyecto = async(req, res)=>{
     
 }
 
+const crearProyecto = async(req,res)=>{
+    const {nombre, usuarioAdmin} = req.body;
+    console.log(nombre, usuarioAdmin);
+
+    try {
+        const proyectoExistente = await Proyecto.findOne({where: {nombre}});
+        if (proyectoExistente) {
+            return res.status(400).json({mensaje: "El proyecto ya Existe"})
+        }
+        if (isNaN(usuarioAdmin)) {
+            return res.status(400).json({ mensaje: "usuarioAdmin debe ser un número válido" });
+        }
+
+        const nuevoProyecto = await Proyecto.create({nombre: nombre, usuarioAdmin: usuarioAdmin, descripcion: "Nuevo Proyecto",})
+
+        res.status(201).json({
+            mensaje: "Se creo el proyecto "
+        })
+
+    } catch (error) {
+        console.error('Error al registrar el proyecto:', error.parent ? error.parent : error);
+        res.status(500).json({ error: 'Error al registrar el proyecto' });
+    }
+}   
+
 
 module.exports = {
     getProyectos,
-    getProyecto
+    getProyecto,
+    crearProyecto
 };
