@@ -13,6 +13,7 @@ const getUsuarios = async (req, res) => {
         });
     }
 }
+
 const getUsuario = async(req, res)=>{
     const userid = req.params.id;   
     try {
@@ -47,9 +48,31 @@ const loginUsuario = async(req, res) =>{
     }
 }
 
+const registrarUsuario = async(req, res) => {
+    const {email, clave, nombre} = req.body;
+
+    try {
+        const usuarioExistente = await Usuario.findOne({ where: { email } });
+        if (usuarioExistente) {
+            return res.status(400).json({ mensaje: 'El usuario ya está registrado' });
+        }
+
+        const nuevoUsuario = Usuario.create({nombre: nombre, email: email, contraseña:clave, imagen: ""});
+
+        res.status(201).json({
+            mensaje: 'Usuario registrado exitosamente',
+        });
+
+    } catch (error) {
+        console.error('Error al registrar el usuario:', error);
+        res.status(500).json({ error: 'Error al registrar el usuario' });
+    }
+    
+}
 
 module.exports = {
     getUsuarios,
     getUsuario,
-    loginUsuario
+    loginUsuario,
+    registrarUsuario
 };

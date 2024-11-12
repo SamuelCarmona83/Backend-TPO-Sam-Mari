@@ -7,5 +7,6 @@ const router = Router();
 router.get('/', UsuarioControlador.getUsuarios);
 router.get('/:id', UsuarioControlador.getUsuario);
 router.post('/login', UsuarioControlador.loginUsuario);
+router.post('/registrarse', UsuarioControlador.registrarUsuario);
 
 module.exports = router;
