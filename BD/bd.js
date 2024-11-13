@@ -21,10 +21,12 @@ const sequelize = new Sequelize(
 const UsuarioModel = require('./Model/Usuario');
 const ProyectoModel = require('./Model/Proyecto');
 const UsuarioProyectoModel = require('./Model/UsuariosProyecto');
+const GastoModel = require('./Model/Gasto');
 
 const Proyecto = ProyectoModel(sequelize, Sequelize);
 const Usuario = UsuarioModel(sequelize, Sequelize);
 const UsuarioProyecto = UsuarioProyectoModel(sequelize, Sequelize);
+const gasto = GastoModel(sequelize, Sequelize)
 
 Usuario.hasMany(Proyecto, {
     foreignkey: 'usuarioAdmin',
@@ -37,8 +39,15 @@ Proyecto.belongsTo(Usuario, {
     as: 'administrador'
 });
 
+//      Relaciones con la tabla de Usuario Proyecto     //
 Usuario.belongsToMany(Proyecto, { through: UsuarioProyecto });
 Proyecto.belongsToMany(Usuario, { through: UsuarioProyecto });
+
+//          Relaciones con la tabla de gastos           //
+Usuario.hasMany(Gasto, { foreignKey: 'usuarioID', as: 'Gastos' });
+Proyecto.hasMany(Gasto, { foreignKey: 'proyectoID', as: 'Gastos' });
+Gasto.belongsTo(Usuario, { foreignKey: 'usuarioID', as: 'Usuario' });
+Gasto.belongsTo(Proyecto, { foreignKey: 'proyectoID', as: 'Proyecto' });
 
 sequelize.sync()
     .then(() => {
