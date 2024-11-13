@@ -1,4 +1,4 @@
-const { Proyecto } = require('../BD/bd');
+const { Proyecto, UsuarioProyecto } = require('../BD/bd');
 const traerTodosLosProyectos = async () => await Proyecto.findAll();
 const traerProyecto = async (proyecid) => await Proyecto.findOne({ where: { ID: proyecid } });
 
@@ -12,6 +12,7 @@ const getProyectos = async (req, res) => {
         });
     }
 }
+
 const getProyecto = async(req, res)=>{
     const proyecid = req.params.id;   
     try {
@@ -39,6 +40,7 @@ const crearProyecto = async(req,res)=>{
         }
 
         const nuevoProyecto = await Proyecto.create({nombre: nombre, usuarioAdmin: usuarioAdmin, descripcion: "Nuevo Proyecto",})
+        const nuevoParticipante = await UsuarioProyecto.create({UsuarioID: usuarioAdmin, ProyectoID: nuevoProyecto.ID });
 
         res.status(201).json({
             mensaje: "Se creo el proyecto "
@@ -50,9 +52,31 @@ const crearProyecto = async(req,res)=>{
     }
 }   
 
+const editarDescripcion = async(req,res)=>{
+    const proyectoId = req.params.id; 
+    const {descripcion} = req.body;
+
+    try {
+        const proyecto = await traerProyecto(proyectoId);
+        if (!proyecto){
+            return res.status(400).json(
+                {mensaje: 'proyecto no encontrado'}
+            )
+        }
+
+        proyecto.descripcion = descripcion;
+        await proyecto.save();
+
+    }catch(error){
+        res.status(500).json({
+            message: err.message
+        });
+    }
+}
 
 module.exports = {
     getProyectos,
     getProyecto,
-    crearProyecto
+    crearProyecto,
+    editarDescripcion
 };
