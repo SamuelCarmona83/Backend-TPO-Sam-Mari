@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
-    const Gasto = sequelize.define('Gasto', {
+    const Gastos = sequelize.define('Gastos', {
         ID: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
@@ -11,7 +11,8 @@ module.exports = (sequelize) => {
             type: DataTypes.DECIMAL(15, 3),
             allowNull: false,
         },
+        imagen: DataTypes.STRING,
     });
 
-    return Gasto;
+    return Gastos;
 };
