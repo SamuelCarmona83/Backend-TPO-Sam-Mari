@@ -14,7 +14,7 @@ const getUsuarios = async (req, res) => {
     }
 }
 
-const getUsuario = async(req, res)=>{
+const getUsuariobyID = async(req, res)=>{
     const userid = req.params.id;   
     try {
         const usuario = await traerUsuario(userid);
@@ -72,7 +72,7 @@ const registrarUsuario = async(req, res) => {
 
 module.exports = {
     getUsuarios,
-    getUsuario,
+    getUsuariobyID,
     loginUsuario,
     registrarUsuario
 };

@@ -52,9 +52,9 @@ const crearProyecto = async(req,res)=>{
     }
 }   
 
-const editarDescripcion = async(req,res)=>{
+const editarProyecto = async(req,res)=>{
     const proyectoId = req.params.id; 
-    const {descripcion} = req.body;
+    const {nombre, descripcion} = req.body;
 
     try {
         const proyecto = await traerProyecto(proyectoId);
@@ -64,7 +64,14 @@ const editarDescripcion = async(req,res)=>{
             )
         }
 
-        proyecto.descripcion = descripcion;
+        if (nombre && typeof nombre === 'string') {
+            proyecto.nombre = nombre;
+        }
+    
+        if (descripcion && typeof descripcion === 'string') {
+            proyecto.descripcion = descripcion;
+        }
+
         await proyecto.save();
 
     }catch(error){
@@ -77,6 +84,6 @@ const editarDescripcion = async(req,res)=>{
 module.exports = {
     getProyectos,
     getProyecto,
-    crearProyecto,
-    editarDescripcion
+    crearProyecto,  
+    editarProyecto
 };

@@ -7,7 +7,7 @@ const router = Router();
 router.get('/', ProyectoControlador.getProyectos);
 router.get('/:id', ProyectoControlador.getProyecto);
 router.post('/crearProyecto', ProyectoControlador.crearProyecto);
-router.post('/editarDescripcion', ProyectoControlador.editarDescripcion);
+router.post('/editarProyecto', ProyectoControlador.editarProyecto);
 
 
 
