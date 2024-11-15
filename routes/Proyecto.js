@@ -7,9 +7,9 @@ const router = Router();
 router.get('/', ProyectoControlador.getProyectos);
 router.get('/:id', ProyectoControlador.getProyecto);
 router.post('/crearProyecto', ProyectoControlador.crearProyecto);
-router.post('/editarProyecto', ProyectoControlador.editarProyecto);
+router.post('/editarProyecto/:id', ProyectoControlador.editarProyecto);
 router.delete('/eliminarProyecto/:id', ProyectoControlador.eliminarProyecto);
-router.get('/participantesDelProyecto', ProyectoControlador.participantesDelProyecto);
+router.get('/participantesDelProyecto/:id', ProyectoControlador.participantesDelProyecto);
 
 
 

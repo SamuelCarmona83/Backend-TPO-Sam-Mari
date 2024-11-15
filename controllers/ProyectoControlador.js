@@ -73,6 +73,7 @@ const editarProyecto = async(req,res)=>{
         }
 
         await proyecto.save();
+        res.status(200).json({mensaje: "Se modifico correctamente el proyecto "+ proyecto.nombre});
 
     }catch(error){
         res.status(500).json({

@@ -3,7 +3,7 @@ const { Usuario } = require('../BD/bd');
 const traerTodosLosUsuarios = async () => await Usuario.findAll();
 const traerUsuario = async (userid) => await Usuario.findOne({ where: { ID: userid } });
 
-const getUsuarios = async (req, res) => {
+const getUsuarios = async (req, res) => {// esta creo que no deberia estar // borrar luego //
     try {
         const usuarios = await traerTodosLosUsuarios();
         res.status(200).json(usuarios);
@@ -69,9 +69,34 @@ const registrarUsuario = async(req, res) => {
     
 }
 
+const modificarUsuario = async (req, res) => {// por ahora lo hare sin el tema de la imagen
+    const {nombre, email, contraseña, ID} = req.body;
+
+    try{
+        const usuarioAModificar = traerUsuario(ID);
+        if(!usuarioAModificar){
+            return res.status(400).json({mensaje: "El usuario no existe"})
+        }
+        if(nombre){
+            usuarioAModificar.nombre = nombre;
+        }
+        if(email){
+            usuarioAModificar.email = email;
+        }
+        if(contraseña){
+            usuarioAModificar.contraseña = contraseña;
+        }
+        res.status(200).json({mensaje: "Se modifico correctamente el usuario" + nombre});
+    }catch(error){
+        console.error('Error al modificar el usuario:', error);
+        res.status(500).json({ error: 'Error al modificar el usuario' });
+    }
+}
+
 module.exports = {
     getUsuarios,
     getUsuariobyID,
     loginUsuario,
-    registrarUsuario
+    registrarUsuario,
+    modificarUsuario
 };

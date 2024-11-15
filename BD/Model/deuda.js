@@ -16,6 +16,11 @@ module.exports = (sequelize) => {
             allowNull: false,
         },
         imagen: DataTypes.STRING,
+        pagada: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false, // Inicializa como no pagada por defecto
+        },
     });
 
     return Gasto;
