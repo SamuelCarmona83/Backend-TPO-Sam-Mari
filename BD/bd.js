@@ -12,7 +12,7 @@ const sequelize = new Sequelize(
         dialectOptions: {
             options: {
                 encrypt: false,
-                trustServerCertificate: true // Esto desactiva la validación del certificado SSL
+                trustServerCertificate: true
             }
         },
         logging: false,

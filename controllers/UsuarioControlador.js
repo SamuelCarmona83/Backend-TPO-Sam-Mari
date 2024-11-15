@@ -40,8 +40,7 @@ const loginUsuario = async(req, res) =>{
             return res.status(401).json({ mensaje: 'Clave incorrecta' });
         }
 
-        res.json({ mensaje: 'Inicio de sesión exitoso', usuario });
-        console.log(usuario)
+        res.json({ mensaje: 'Inicio de sesión exitoso', usuario: usuario });
     } catch (error) {
         console.error('Error al iniciar sesión:', error);
         res.status(500).json({ error: 'Error al iniciar sesión' });
@@ -60,7 +59,7 @@ const registrarUsuario = async(req, res) => {
         const nuevoUsuario = await Usuario.create({nombre: nombre, email: email, contraseña:clave, imagen: ""});
 
         res.status(201).json({
-            mensaje: 'Usuario registrado exitosamente',
+            mensaje: 'Usuario registrado exitosamente'
         });
 
     } catch (error) {

@@ -81,9 +81,50 @@ const editarProyecto = async(req,res)=>{
     }
 }
 
+const eliminarProyecto = async (req, res) => {
+    const proyectoId = req.params.id;
+    try {
+        const proyecto = await traerProyecto(proyectoId);
+        if (!proyecto) {
+            return res.status(404).json({ mensaje: "Proyecto no encontrado" });
+        }
+        // Eliminar las deudas relacionadas con el proyecto
+        await deudas.destroy({ where: { proyectoId } });
+        // Eliminar los gastos relacionados con el proyecto
+        await Gastos.destroy({ where: { proyectoID: proyectoId } });
+        // Eliminar las relaciones en UsuarioProyecto
+        await UsuarioProyecto.destroy({ where: { ProyectoID: proyectoId } });
+        await proyecto.destroy();
+        res.status(200).json({ mensaje: "Proyecto eliminado exitosamente" });
+    } catch (error) {
+        console.error('Error al eliminar el proyecto:', error.parent ? error.parent : error);
+        res.status(500).json({ mensaje: "Error al eliminar el proyecto" });
+    }
+};
+
+const participantesDelProyecto = async (req, res) => {
+    const proyectoId = req.params.id;
+    try {
+        const proyecto = await traerProyecto(proyectoId);
+        if (!proyecto) {
+            return res.status(404).json({ mensaje: "Proyecto no encontrado" });
+        }
+
+        const participantes = await UsuarioProyecto.findAll({where: { ID: proyectoId } });
+        res.status(200).json({participantes});
+    }catch(error){
+        res.status(500).json({
+            message: err.message
+        });
+    }
+
+}
+
 module.exports = {
     getProyectos,
     getProyecto,
     crearProyecto,  
-    editarProyecto
+    editarProyecto,
+    eliminarProyecto,
+    participantesDelProyecto
 };
