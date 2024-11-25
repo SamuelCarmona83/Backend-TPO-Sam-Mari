@@ -23,5 +23,5 @@ module.exports = (sequelize) => {
         },
     });
 
-    return Gasto;
+    return Deudas;
 };

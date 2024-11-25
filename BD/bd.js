@@ -27,8 +27,8 @@ const DeudaModelo = require('./Model/Deuda');
 const Proyecto = ProyectoModel(sequelize, Sequelize);
 const Usuario = UsuarioModel(sequelize, Sequelize);
 const UsuarioProyecto = UsuarioProyectoModel(sequelize, Sequelize);
-const gastos = GastoModel(sequelize, Sequelize);
-const deudas = DeudaModelo(sequelize, Sequelize);
+const Gastos = GastoModel(sequelize, Sequelize);
+const Deudas = DeudaModelo(sequelize, Sequelize);
 
 
 Usuario.hasMany(Proyecto, {
@@ -42,7 +42,7 @@ Proyecto.belongsTo(Usuario, {
     as: 'administrador'
 });
 
-//      Relaciones con la tabla de Usuario Proyecto     //
+//          Relaciones con la tabla de Usuario Proyecto          //
 Usuario.belongsToMany(Proyecto, { through: UsuarioProyecto });
 Proyecto.belongsToMany(Usuario, { through: UsuarioProyecto });
 
@@ -51,17 +51,16 @@ Usuario.hasMany(Gastos, { foreignKey: 'usuarioID', as: 'Gastos' });
 Proyecto.hasMany(Gastos, { foreignKey: 'proyectoID', as: 'Gastos' });
 Gastos.belongsTo(Usuario, { foreignKey: 'usuarioID', as: 'Usuario' });
 Gastos.belongsTo(Proyecto, { foreignKey: 'proyectoID', as: 'Proyecto' });
+Gastos.hasMany(Deudas, {foreignKey: 'gastoID', as: 'deudasGeneradas' });
 
 //          Relaciones con la tabla de Deudas           //
-Proyecto.hasMany(Deuda, { foreignKey: 'proyectoId', as: 'deudas' });
-Deuda.belongsTo(Proyecto, { foreignKey: 'proyectoId', as: 'proyecto' });
-Usuario.hasMany(Deuda, { foreignKey: 'deudorId', as: 'deudasComoDeudor' });
-Deuda.belongsTo(Usuario, { foreignKey: 'deudorId', as: 'deudor' });
-Usuario.hasMany(Deuda, { foreignKey: 'cobradorId', as: 'deudasComoCobrador' });
-Deuda.belongsTo(Usuario, { foreignKey: 'cobradorId', as: 'cobrador' });
-Deuda.belongsTo(Gasto, {foreignKey: 'gastoID', as: 'gastoRelacionado' });
-Gasto.hasMany(Deuda, {foreignKey: 'gastoID', as: 'deudasGeneradas' });
-
+Proyecto.hasMany(Deudas, { foreignKey: 'proyectoId', as: 'deudas' });
+Deudas.belongsTo(Proyecto, { foreignKey: 'proyectoId', as: 'proyecto' });
+Usuario.hasMany(Deudas, { foreignKey: 'deudorId', as: 'deudasComoDeudor' });
+Deudas.belongsTo(Usuario, { foreignKey: 'deudorId', as: 'deudor' });
+Usuario.hasMany(Deudas, { foreignKey: 'cobradorId', as: 'deudasComoCobrador' });
+Deudas.belongsTo(Usuario, { foreignKey: 'cobradorId', as: 'cobrador' });
+Deudas.belongsTo(Gastos, {foreignKey: 'gastoID', as: 'gastoRelacionado' });
 
 sequelize.sync()
     .then(() => {
@@ -77,5 +76,5 @@ module.exports = {
     Proyecto,
     UsuarioProyecto,
     Gastos,
-    deudas
+    Deudas
 };
