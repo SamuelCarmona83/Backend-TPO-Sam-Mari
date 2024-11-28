@@ -37,8 +37,9 @@ const loginUsuario = async(req, res) =>{
         if (!usuario) {
             return res.status(404).json({ mensaje: 'Usuario no encontrado' });
         }
-        const esContraseñaValida = await bcrypt.compare(contraseña, usuario.contraseña);
-        if (!esContraseñaValida) {
+
+        const contraseñaHash = await bcrypt.hash(clave, process.env.SALT);
+        if (contraseñaHash != usuario.contraseña) {
             return res.status(401).json({ mensaje: 'Clave incorrecta' });
         }
 
@@ -50,7 +51,7 @@ const loginUsuario = async(req, res) =>{
 }
 
 const registrarUsuario = async(req, res) => {
-    const {email, contraseña, nombre} = req.body;
+    const {email, clave, nombre} = req.body;
 
     try {
         const usuarioExistente = await Usuario.findOne({ where: { email } });
@@ -58,8 +59,8 @@ const registrarUsuario = async(req, res) => {
             return res.status(400).json({ mensaje: 'El usuario ya está registrado' });
         }
 
-        const contraseñaHash = await bcrypt.hash(contraseña, process.env.SALT);
-
+        const contraseñaHash = await bcrypt.hash(clave, process.env.SALT);
+        
         await Usuario.create({nombre: nombre, email: email, contraseña: contraseñaHash, imagen: ""});
 
         res.status(200).json({
@@ -68,7 +69,7 @@ const registrarUsuario = async(req, res) => {
 
     } catch (error) {
         console.error('Error al registrar el usuario:', error);
-        res.status(500).json({ error: 'Error al registrar el usuario' });
+        res.status(500).json({ error: 'Error al registrar el usuario  ' + error});
     }
     
 }
@@ -88,7 +89,7 @@ const modificarUsuario = async (req, res) => {// por ahora lo hare sin el tema d
             usuarioAModificar.email = email;
         }
         if(contraseña){
-            const contraseñaHash = await bcrypt.hash(contraseña, process.env.SALT);
+            const contraseñaHash = bcrypt.hash(contraseña, process.env.SALT);
             usuarioAModificar.contraseña = contraseñaHash;
         }
         res.status(200).json({mensaje: "Se modifico correctamente el usuario" + nombre});

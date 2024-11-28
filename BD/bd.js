@@ -23,6 +23,7 @@ const ProyectoModel = require('./Model/Proyecto');
 const UsuarioProyectoModel = require('./Model/UsuariosProyecto');
 const GastoModel = require('./Model/Gasto');
 const DeudaModelo = require('./Model/Deuda');
+const { hash } = require('bcrypt');
 
 const Proyecto = ProyectoModel(sequelize, Sequelize);
 const Usuario = UsuarioModel(sequelize, Sequelize);
@@ -63,7 +64,7 @@ Deudas.belongsTo(Usuario, { foreignKey: 'cobradorId', as: 'cobrador' });
 Deudas.belongsTo(Gastos, {foreignKey: 'gastoID', as: 'gastoRelacionado' });
 
 sequelize.sync()
-    .then(() => {
+    .then( () => {
         console.log('Database & tables created!');
     })
     .catch(err => {
