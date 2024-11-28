@@ -1,4 +1,6 @@
 const { Sequelize } = require('sequelize');
+const bcrypt = require('bcrypt');
+require('dotenv').config();
 
 // conectar la base de datos //
 const sequelize = new Sequelize(
@@ -63,9 +65,16 @@ Usuario.hasMany(Deudas, { foreignKey: 'cobradorId', as: 'deudasComoCobrador' });
 Deudas.belongsTo(Usuario, { foreignKey: 'cobradorId', as: 'cobrador' });
 Deudas.belongsTo(Gastos, {foreignKey: 'gastoID', as: 'gastoRelacionado' });
 
+const generarsalt = async () => {
+    const newSalt = await bcrypt.genSalt(10); // Genera un nuevo salt
+    return newSalt;
+}
+
 sequelize.sync()
-    .then( () => {
+    .then( async () => {
         console.log('Database & tables created!');
+        const salt = await generarsalt();
+        console.log('NuevoSalt: ' + salt);
     })
     .catch(err => {
         console.log('Error: ', err);

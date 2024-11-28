@@ -1,6 +1,7 @@
 const { where, Op } = require('sequelize');
 const { Usuario } = require('../BD/bd');
 const bcrypt = require('bcrypt');
+const jwt = require("jsonwebtoken");
 require('dotenv').config();
 const traerTodosLosUsuarios = async () => await Usuario.findAll();
 const traerUsuario = async (userid) => await Usuario.findOne({ where: { ID: userid } });
@@ -37,13 +38,29 @@ const loginUsuario = async(req, res) =>{
         if (!usuario) {
             return res.status(404).json({ mensaje: 'Usuario no encontrado' });
         }
-
-        const contraseñaHash = await bcrypt.hash(clave, process.env.SALT);
-        if (contraseñaHash != usuario.contraseña) {
+        
+        const claveHash = await bcrypt.hash(clave, process.env.SALT);
+        const validarClave = await bcrypt.compare(claveHash, usuario.contraseña);
+        if (validarClave) {
             return res.status(401).json({ mensaje: 'Clave incorrecta' });
         }
 
-        res.status(200).json({ mensaje: 'Inicio de sesión exitoso', usuario: usuario });
+        const token = jwt.sign(
+            { id: usuario.ID, email: usuario.email }, 
+            process.env.KEY,                          
+            { expiresIn: "8h" }                       
+        );
+
+        res.status(200).json({
+            mensaje: 'Inicio de sesión exitoso',
+            token,
+            usuario: {
+                id: usuario.ID,
+                nombre: usuario.nombre,
+                email: usuario.email,
+            },
+        });
+        
     } catch (error) {
         console.error('Error al iniciar sesión:', error);
         res.status(500).json({ error: 'Error al iniciar sesión' });
@@ -58,7 +75,7 @@ const registrarUsuario = async(req, res) => {
         if (usuarioExistente) {
             return res.status(400).json({ mensaje: 'El usuario ya está registrado' });
         }
-
+        
         const contraseñaHash = await bcrypt.hash(clave, process.env.SALT);
         
         await Usuario.create({nombre: nombre, email: email, contraseña: contraseñaHash, imagen: ""});
