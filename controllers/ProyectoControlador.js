@@ -146,9 +146,9 @@ const agregarParticipante = async (req, res) => {
     //validando si ya esta agregado//
     const participantes = await UsuarioProyecto.findAll({where: { ProyectoID: proyectoId } });
     let participanteEncontrado = false;
-    participanteEncontrado = participantes.map(participante => {
+    participantes.map(participante => {
         if (participante.UsuarioID === usuarioId) {
-            return true
+            participanteEncontrado = true;
         }
     })
     if(participanteEncontrado){
@@ -180,5 +180,6 @@ module.exports = {
     editarProyecto,
     eliminarProyecto,
     participantesDelProyecto,
-    agregarParticipante
+    agregarParticipante,
+    traerProyecto
 };

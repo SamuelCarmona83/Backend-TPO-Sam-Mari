@@ -12,6 +12,7 @@ module.exports = (sequelize) => {
             allowNull: false,
         },
         imagen: DataTypes.STRING,
+        descripcion: DataTypes.STRING,
     });
 
     return Gastos;
