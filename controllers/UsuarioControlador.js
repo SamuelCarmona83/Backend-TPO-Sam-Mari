@@ -172,7 +172,7 @@ const recuperarContraseña = async (req, res) => {
             from: process.env.EMAIL_USER,
             to: email,
             subject: 'Recuperación de Contraseña',
-            text: `Haz clic en el siguiente enlace para recuperar tu contraseña: \n\nhttp://localhost:3000/recuperar-contraseña/${usuario.ID}`, 
+            text: `Haz clic en el siguiente enlace para recuperar tu contraseña: \n\nhttp://localhost:3000/CambiarClave/${usuario.ID}`, 
         };
 
      

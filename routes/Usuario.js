@@ -13,5 +13,8 @@ router.post('/registrarse', UsuarioControlador.registrarUsuario);
 router.post('/recuperarContra', UsuarioControlador.recuperarContraseña);
 router.post('/modificarUsuario', validarJWT, UsuarioControlador.modificarUsuario);
 router.post('/buscarUsuario', validarJWT, UsuarioControlador.buscarUsuarioPorNombre);
+router.post('/cambiarClave/:id', UsuarioControlador.modificarUsuario);
+
+
 
 module.exports = router;
