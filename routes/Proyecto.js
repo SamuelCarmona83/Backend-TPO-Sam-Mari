@@ -13,4 +13,4 @@ router.get('/participantesDelProyecto/:id', ProyectoControlador.participantesDel
 
 
 
-module.exports = router;
+module.exports = router; 

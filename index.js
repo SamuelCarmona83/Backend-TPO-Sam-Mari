@@ -19,7 +19,7 @@ app.listen(PORT, () => {
 })
 
 app.use('/api/usuarios', require('./routes/Usuario.js'));
-app.use('/api/proyectos',require('./routes/Proyecto.js'))
+app.use('/api/proyectos',require('./routes/Proyecto.js'));
 
 //crear la ruta proyectos 
   

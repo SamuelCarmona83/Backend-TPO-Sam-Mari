@@ -2,6 +2,7 @@ const { where, Op } = require('sequelize');
 const { Usuario } = require('../BD/bd');
 const bcrypt = require('bcrypt');
 require('dotenv').config();
+const nodemailer = require('nodemailer');
 const traerTodosLosUsuarios = async () => await Usuario.findAll();
 const traerUsuario = async (userid) => await Usuario.findOne({ where: { ID: userid } });
 
@@ -123,7 +124,50 @@ const buscarUsuarioPorNombre = async (req, res) => {
         console.error('Error al buscar usuarios:', err);
         res.status(500).json({ mensaje: 'Error al buscar usuarios' });
     }
+
 };
+
+const recuperarContraseña = async (req, res) => {
+    const { email } = req.body; 
+    console.log(email);
+
+    try {
+        const usuario = await Usuario.findOne({ where: { email } });
+
+        if (!usuario) {
+            return res.status(404).json({ message: 'Usuario no encontrado con ese correo.' });
+        }
+
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.EMAIL_USER, 
+                pass: process.env.EMAIL_PASS, 
+            },
+        });
+
+      
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: email,
+            subject: 'Recuperación de Contraseña',
+            text: `Haz clic en el siguiente enlace para recuperar tu contraseña: \n\nhttp://localhost:3000/recuperar-contraseña/${usuario.ID}`, 
+        };
+
+     
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                return res.status(500).json({ message: 'Error al enviar el correo.', error });
+            }
+            res.status(200).json({ message: 'Correo enviado exitosamente para recuperar tu contraseña.' });
+        });
+
+    } catch (error) {
+        console.error('Error al recuperar la contraseña:', error);
+        res.status(500).json({ message: 'Hubo un error al procesar la solicitud.' });
+    }
+};
+
 
 module.exports = {
     getUsuarios,
@@ -131,5 +175,6 @@ module.exports = {
     loginUsuario,
     registrarUsuario,
     modificarUsuario,
-    buscarUsuarioPorNombre
+    buscarUsuarioPorNombre,
+    recuperarContraseña,
 };
