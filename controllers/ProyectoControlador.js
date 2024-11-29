@@ -151,7 +151,6 @@ const agregarParticipante = async (req, res) => {
             participanteEncontrado = true;
         }
     })
-    console.log(participanteEncontrado);
     if(participanteEncontrado){
         return res.status(400).json({
             mensaje: "Ya esta agregado"
@@ -181,5 +180,6 @@ module.exports = {
     editarProyecto,
     eliminarProyecto,
     participantesDelProyecto,
-    agregarParticipante
+    agregarParticipante,
+    traerProyecto
 };
