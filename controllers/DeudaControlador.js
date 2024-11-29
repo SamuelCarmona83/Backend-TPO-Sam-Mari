@@ -175,6 +175,33 @@ const marcarDeudaComoPagada = async (req, res) => {
     }
 };
 
+const obtenerDeudasUsuarioPorProyecto = async (req, res) => {
+    const proyectoId = Number(req.params.proyectoId);
+    const usuarioId = Number(req.params.usuarioId);
+
+    try {
+        if (isNaN(usuarioId) || isNaN(proyectoId)) {
+            return res.status(400).json({ mensaje: "deudorId y proyectoId deben ser números válidos" });
+        }
+
+
+        const deudas = await Deudas.findAll({
+            where: {
+                deudorId: Number(usuarioId),
+                proyectoId: Number(proyectoId),
+            },
+        });
+
+        res.status(200).json(deudas);
+    } catch (error) {
+
+        res.status(500).json({
+            mensaje: "Error al obtener las deudas: " + error.message,
+        });
+    }
+};
+
+
 
 module.exports = {
     crearDeuda,
@@ -182,5 +209,6 @@ module.exports = {
     eliminarDeuda,
     actualizarImagenDeDeuda,
     obtenerDeudasEntreUsuarios,
-    marcarDeudaComoPagada
+    marcarDeudaComoPagada,
+    obtenerDeudasUsuarioPorProyecto
 };

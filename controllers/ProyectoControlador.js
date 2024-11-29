@@ -1,4 +1,4 @@
-const { Proyecto, UsuarioProyecto } = require('../BD/bd');
+const { Proyecto, UsuarioProyecto, Deudas, Gastos} = require('../BD/bd');
 const { Op } = require('sequelize');
 const {traerUsuario} = require('../controllers/UsuarioControlador');
 const proyectosDelUsuario = async (UsuarioID) => await UsuarioProyecto.findAll({where:{UsuarioID: UsuarioID}});
@@ -6,7 +6,6 @@ const traerProyecto = async (proyectoID) => await Proyecto.findOne({ where: { ID
 
 const getProyectos = async (req, res) => {
     const UsuarioID = Number(req.query.usuarioId || req.params.usuarioId);
-    console.log(UsuarioID);
     try {
         const proyectosID = await proyectosDelUsuario(UsuarioID);
         const ids = proyectosID.map(proyecto => proyecto.ProyectoID);
@@ -55,7 +54,7 @@ const crearProyecto = async(req,res)=>{
         const nuevoProyecto = await Proyecto.create({nombre: nombre, usuarioAdmin: usuarioAdmin, descripcion: "Nuevo Proyecto",})
         await UsuarioProyecto.create({UsuarioID: usuarioAdmin, ProyectoID: nuevoProyecto.ID });
 
-        res.status(201).json({
+        res.status(200).json({
             mensaje: "Se creo el proyecto " + nuevoProyecto.nombre,
         });
 
@@ -103,7 +102,7 @@ const eliminarProyecto = async (req, res) => {
             return res.status(404).json({ mensaje: "Proyecto no encontrado" });
         }
         // Eliminar las deudas relacionadas con el proyecto
-        await deudas.destroy({ where: { proyectoId } });
+        await Deudas.destroy({ where: { proyectoId } });
         // Eliminar los gastos relacionados con el proyecto
         await Gastos.destroy({ where: { proyectoID: proyectoId } });
         // Eliminar las relaciones en UsuarioProyecto

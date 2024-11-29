@@ -5,7 +5,7 @@ const {validarJWT} = require('../middelwares/jwtValidador');
 
 router.post('/crearGasto',validarJWT, gastosControlador.crearGasto);
 router.delete('/eliminarGasto/:gastoID',validarJWT, gastosControlador.eliminarGasto);
-router.get('/obtenerGastosUsuario/:proyectoID/:usuarioID',validarJWT, gastosControlador.obtenerGastosDelUsuarioPorProyecto);
+router.get('/obtenerGastosUsuario/:proyectoID/:usuarioID', gastosControlador.obtenerGastosDelUsuarioPorProyecto);
 router.get('/gastosProyecto/:proyectoID', validarJWT, gastosControlador.obtenerGastosPorProyecto);
 
 module.exports = router;

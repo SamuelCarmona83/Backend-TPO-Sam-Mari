@@ -7,6 +7,7 @@ router.post('/crearDeuda',validarJWT, deudaControlador.crearDeuda);
 router.delete('/eliminarDeuda/:deudaID', validarJWT, deudaControlador.eliminarDeuda);
 router.post('/cambiarImagen/:deudaID',validarJWT, deudaControlador.actualizarImagenDeDeuda);
 router.post('/deudasEntreUsuarios',validarJWT, deudaControlador.obtenerDeudasEntreUsuarios);
-router.put('/pagarDeuda/:deudaID',validarJWT, deudaControlador.marcarDeudaComoPagada)
+router.put('/pagarDeuda/:deudaID',validarJWT, deudaControlador.marcarDeudaComoPagada);
+router.get('/deudasUsuarioPorProyecto/:proyectoId/:usuarioId',validarJWT, deudaControlador.obtenerDeudasUsuarioPorProyecto);
 
 module.exports = router;

@@ -65,14 +65,10 @@ const eliminarGasto = async (req, res) => {
 };
 
 const obtenerGastosDelUsuarioPorProyecto = async (req, res) => {
-    const proyectoID = Number(req.params.proyectoID || req.query.proyectoID);
+    const proyectoID = Number(req.params.proyectoID);
     const usuarioID = Number(req.params.usuarioID);
 
     try {
-        if (isNaN(usuarioID) || isNaN(proyectoID)) {
-            return res.status(400).json({ mensaje: "usuarioID y proyectoID deben ser números válidos" });
-        }
-
         const usuario = await traerUsuario(usuarioID);
         if (!usuario) {
             return res.status(404).json({ mensaje: "El Usuario no existe" });
