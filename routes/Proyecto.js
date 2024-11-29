@@ -10,7 +10,8 @@ router.get('/getProyecto/:id',validarJWT, ProyectoControlador.getProyecto);
 router.post('/crearProyecto',validarJWT, ProyectoControlador.crearProyecto);
 router.post('/editarProyecto/:id',validarJWT, ProyectoControlador.editarProyecto);
 router.delete('/eliminarProyecto/:id',validarJWT, ProyectoControlador.eliminarProyecto);
-router.get('/participantesDelProyecto/:id', ProyectoControlador.participantesDelProyecto);// cambiar
+router.get('/participantesDelProyecto/:id',validarJWT, ProyectoControlador.participantesDelProyecto);// cambiar
+router.post('/agregarParticipante/:id',validarJWT, ProyectoControlador.agregarParticipante );
 
 
 
