@@ -3,3 +3,10 @@ const deudaControlador = require('../controllers/DeudaControlador');
 const router = express.Router();
 const {validarJWT} = require('../middelwares/jwtValidador');
 
+router.post('/crearDeuda',validarJWT, deudaControlador.crearDeuda);
+router.delete('/eliminarDeuda', validarJWT, deudaControlador.eliminarDeuda);
+router.post('/cambiarImagen/:deudaID',validarJWT, deudaControlador.actualizarImagenDeDeuda);
+router.post('/deudasEntreUsuarios',validarJWT, deudaControlador.obtenerDeudasEntreUsuarios);
+router.put('/pagarDeuda/:deudaID',validarJWT, deudaControlador.marcarDeudaComoPagada)
+
+module.exports = router;

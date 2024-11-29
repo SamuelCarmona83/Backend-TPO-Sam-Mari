@@ -120,7 +120,7 @@ const actualizarImagenDeDeuda = async (req, res) => {
 };
 
 const obtenerDeudasEntreUsuarios = async (req, res) => {
-    const { deudorId, cobradorId, proyectoId } = req.query;
+    const { deudorId, cobradorId, proyectoId } = req.body;
 
     try {
         if (isNaN(deudorId) || isNaN(cobradorId) || isNaN(proyectoId)) {
@@ -147,10 +147,40 @@ const obtenerDeudasEntreUsuarios = async (req, res) => {
     }
 };
 
+const marcarDeudaComoPagada = async (req, res) => {
+    const deudaID = Number(req.params.deudaID || req.query.deudaID);
+
+    try {
+        if (isNaN(deudaID)) {
+            return res.status(400).json({ mensaje: "deudaID debe ser un número válido" });
+        }
+
+        const deuda = await Deudas.findByPk(deudaID);
+        if (!deuda) {
+            return res.status(404).json({ mensaje: "La deuda no existe" });
+        }
+
+        if (deuda.pagada) {
+            return res.status(400).json({ mensaje: "La deuda ya está marcada como pagada" });
+        }
+
+        deuda.pagada = true;
+        await deuda.save();
+
+        res.status(200).json({ mensaje: "Deuda marcada como pagada con éxito", deuda });
+    } catch (error) {
+        res.status(500).json({
+            mensaje: "Error al marcar la deuda como pagada: " + error.message,
+        });
+    }
+};
+
+
 module.exports = {
     crearDeuda,
     eliminarDeudasDeUnGasto,
     eliminarDeuda,
     actualizarImagenDeDeuda,
-    obtenerDeudasEntreUsuarios
+    obtenerDeudasEntreUsuarios,
+    marcarDeudaComoPagada
 };
