@@ -15,4 +15,4 @@ router.post('/agregarParticipante/:id',validarJWT, ProyectoControlador.agregarPa
 
 
 
-module.exports = router;
+module.exports = router; 
