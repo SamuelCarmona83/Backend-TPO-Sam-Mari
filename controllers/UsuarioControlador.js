@@ -41,8 +41,7 @@ const loginUsuario = async(req, res) =>{
         }
         
         const claveHash = await bcrypt.hash(clave, process.env.SALT);
-        const validarClave = await bcrypt.compare(claveHash, usuario.contraseña);
-        if (validarClave) {
+        if (!(usuario.contraseña === claveHash)) {
             return res.status(401).json({ mensaje: 'Clave incorrecta' });
         }
 
@@ -64,7 +63,7 @@ const loginUsuario = async(req, res) =>{
         
     } catch (error) {
         console.error('Error al iniciar sesión:', error);
-        res.status(500).json({ error: 'Error al iniciar sesión' });
+        res.status(500).json({ mensaje: 'Error al iniciar sesión' });
     }
 }
 
@@ -94,7 +93,7 @@ const registrarUsuario = async(req, res) => {
 }
 
 const modificarUsuario = async (req, res) => {// por ahora lo hare sin el tema de la imagen
-    const {nombre, email, clave, ID} = req.body;
+    const {nombre, email, clave, ID, imagen} = req.body;
 
     try{
         const usuarioAModificar = await traerUsuario(ID);
@@ -111,8 +110,11 @@ const modificarUsuario = async (req, res) => {// por ahora lo hare sin el tema d
             const contraseñaHash = await bcrypt.hash(clave, process.env.SALT);
             usuarioAModificar.contraseña = contraseñaHash;
         }
+        if(imagen && typeof imagen == "string"){
+            usuarioAModificar.imagen = imagen;
+        }
         await usuarioAModificar.save();
-        res.status(200).json({mensaje: "Se modifico correctamente el usuario" + usuarioAModificar.nombre});
+        res.status(200).json({mensaje: "Se modifico correctamente el usuario: " + usuarioAModificar.nombre});
     }catch(error){
         console.error('Error al modificar el usuario:', error);
         res.status(500).json({ error: 'Error al modificar el usuario' });

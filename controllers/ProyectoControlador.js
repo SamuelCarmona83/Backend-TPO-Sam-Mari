@@ -23,14 +23,13 @@ const getProyectos = async (req, res) => {
         res.status(200).json(proyectos);
     } catch (err) {
         res.status(500).json({
-            message: err.message
+            mensaje: err.message
         });
     }
 }
 
 const getProyecto = async(req, res)=>{
     const proyectoid = Number(req.query.id || req.params.id);
-    console.log(proyectoid);
     try {
         const proyecto = await traerProyecto(proyectoid);
         res.status(200).json(proyecto);
