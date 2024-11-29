@@ -1,11 +1,13 @@
 const { Gastos } = require('../BD/bd');
-const { Op } = require('sequelize');
-const {traerUsuario} = require('../controllers/UsuarioControlador');
-const {traerProyecto} = require('../controllers/ProyectoControlador');
+const {traerUsuario} = require('./UsuarioControlador');
+const {traerProyecto} = require('./ProyectoControlador');
+const {eliminarDeudasDeUnGasto} = require('./DeudaControlador')
 const jwt = require('jsonwebtoken');
 
+const traerGasto = async (gastoID) => await Gastos.findOne({ where: { ID: gastoID } });
+
 const crearGasto = async (req,res) => {
-    const {monto, imagen, usuarioID, proyectoID} = req.body;
+    const {monto, imagen, descripcion, usuarioID, proyectoID} = req.body;
 
     try {
         if (isNaN(usuarioID)) {
@@ -26,15 +28,15 @@ const crearGasto = async (req,res) => {
         if (isNaN(montoDecimal) || montoDecimal <= 0) {
             return res.status(400).json({ mensaje: "monto debe ser un número válido mayor a 0" });
         }
-        const nuevoGasto = {
+        await Gastos.create({
             monto: montoDecimal,
             imagen,
+            descripcion,
             usuarioID,
             proyectoID,
-        };
-        await Gastos.create(nuevoGasto);
+        });
 
-
+        res.status(200).json({mensaje: "Se creo correctamente el gasto"});
     } catch (error){
         res.status(500).json({
             mensaje: "Error al registrar el gasto " + error.message,
@@ -43,7 +45,7 @@ const crearGasto = async (req,res) => {
 }
 
 const eliminarGasto = async (req, res) => {
-    const gastoID = Number(req.params.id || req.query.id);
+    const gastoID = Number(req.params.gastoID || req.query.gastoID);
 
     try {
         if (isNaN(gastoID)) {
@@ -54,7 +56,7 @@ const eliminarGasto = async (req, res) => {
         if (!gasto) {
             return res.status(404).json({ mensaje: "El gasto no existe" });
         }
-
+        await eliminarDeudasDeUnGasto(gastoID);
         await Gastos.destroy({ where: { id: gastoID } });
         res.status(200).json({ mensaje: "Gasto eliminado con éxito" });
     } catch (error) {
@@ -65,16 +67,10 @@ const eliminarGasto = async (req, res) => {
 };
 
 const obtenerGastosDelUsuarioPorProyecto = async (req, res) => {
-    const proyectoID = Number(req.params.id || req.query.id);
-    const token = req.headers.jwt;
+    const proyectoID = Number(req.params.proyectoID || req.query.proyectoID);
+    const usuarioID = Number(req.params.usuarioID);
 
-    if (!token) {
-        return res.status(401).json({ mensaje: "Acceso denegado: No se proporcionó un token" });
-    }
     try {
-        const dataToken = jwt.verify(token, process.env.KEY);
-        const usuarioID = dataToken.id;
-
         if (isNaN(usuarioID) || isNaN(proyectoID)) {
             return res.status(400).json({ mensaje: "usuarioID y proyectoID deben ser números válidos" });
         }
@@ -83,7 +79,6 @@ const obtenerGastosDelUsuarioPorProyecto = async (req, res) => {
         if (!usuario) {
             return res.status(404).json({ mensaje: "El Usuario no existe" });
         }
-
         const proyecto = await traerProyecto(proyectoID);
         if (!proyecto) {
             return res.status(404).json({ mensaje: "El Proyecto no existe" });
@@ -101,8 +96,38 @@ const obtenerGastosDelUsuarioPorProyecto = async (req, res) => {
     }
 }
 
+const obtenerGastosPorProyecto = async (req, res) => {
+    const proyectoID = Number(req.params.proyectoID || req.query.proyectoID);
+
+    try {
+        if (isNaN(proyectoID)) {
+            return res.status(400).json({ mensaje: "proyectoID debe ser un número válido" });
+        }
+
+        const proyecto = await traerProyecto(proyectoID);
+        if (!proyecto) {
+            return res.status(404).json({ mensaje: "El Proyecto no existe" });
+        }
+
+        const gastos = await Gastos.findAll({
+            where: {
+                proyectoID,
+            },
+        });
+
+        res.status(200).json(gastos);
+    } catch (error) {
+        res.status(500).json({
+            mensaje: "Error al obtener los gastos del proyecto: " + error.message,
+        });
+    }
+};
+
+
 module.exports = {
     crearGasto,
     eliminarGasto,
-    obtenerGastosDelUsuarioPorProyecto
+    obtenerGastosDelUsuarioPorProyecto,
+    traerGasto,
+    obtenerGastosPorProyecto
 };

@@ -1,10 +1,11 @@
 const express = require('express');
-const { crearGasto, eliminarGasto, obtenerGastosDelUsuarioPorProyecto } = require('../controllers/GastosControlador');
+const gastosControlador = require('../controllers/GastosControlador');
 const router = express.Router();
 const {validarJWT} = require('../middelwares/jwtValidador');
 
-router.post('/gastos',validarJWT, crearGasto); // Crear un gasto
-router.delete('/gastos/:id',validarJWT, eliminarGasto); // Eliminar un gasto por ID
-router.get('/gastos/:id',validarJWT, obtenerGastosDelUsuarioPorProyecto); // Obtener gastos por usuario y proyecto
+router.post('/crearGasto',validarJWT, gastosControlador.crearGasto); // Crear un gasto
+router.delete('/eliminarGasto/:gastoID',validarJWT, gastosControlador.eliminarGasto); // Eliminar un gasto por ID
+router.get('/obtenerGastosUsuario/:proyectoID/:usuarioID',validarJWT, gastosControlador.obtenerGastosDelUsuarioPorProyecto); // Obtener gastos por usuario y proyecto
+router.get('/gastosProyecto/:proyectoID', validarJWT, gastosControlador.obtenerGastosPorProyecto);
 
 module.exports = router;
