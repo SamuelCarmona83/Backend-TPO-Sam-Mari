@@ -4,8 +4,6 @@ const {traerProyecto} = require('./ProyectoControlador');
 const {eliminarDeudasDeUnGasto} = require('./DeudaControlador')
 const jwt = require('jsonwebtoken');
 
-const traerGasto = async (gastoID) => await Gastos.findOne({ where: { ID: gastoID } });
-
 const crearGasto = async (req,res) => {
     const {monto, imagen, descripcion, usuarioID, proyectoID} = req.body;
 
@@ -128,6 +126,5 @@ module.exports = {
     crearGasto,
     eliminarGasto,
     obtenerGastosDelUsuarioPorProyecto,
-    traerGasto,
     obtenerGastosPorProyecto
 };

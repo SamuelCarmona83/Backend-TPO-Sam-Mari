@@ -1,7 +1,8 @@
 const { Deudas } = require('../BD/bd');
 const {traerUsuario} = require('../controllers/UsuarioControlador');
 const {traerProyecto} = require('../controllers/ProyectoControlador');
-const { traerGasto } = require('./GastosControlador');
+const { Gastos } = require('../BD/bd');
+const traerGasto = async (gastoID) => await Gastos.findByPk(gastoID);
 
 const crearDeuda = async (req, res) => {
     const {monto, porcentaje, gastoID, proyectoId, deudorId, cobradorId} = req.body;
@@ -10,7 +11,7 @@ const crearDeuda = async (req, res) => {
         if (isNaN(deudorId) ||isNaN(cobradorId) || isNaN(proyectoId)) {
             return res.status(400).json({ mensaje: "deudorId, cobradorId y proyectoId deben ser números válidos" });
         }
-        const gasto = await traerGasto(gastoID);// traer gasto
+        const gasto = await traerGasto(gastoID);
         if (!gasto) {
             return res.status(404).json({ mensaje: "El gasto no existe" });
         }
@@ -36,7 +37,6 @@ const crearDeuda = async (req, res) => {
             monto: montoDecimal,
             porcentaje,
             imagen: "",
-            descripcion,
             gastoID,
             proyectoId,
             deudorId,
