@@ -3,22 +3,27 @@ const bcrypt = require('bcrypt');
 require('dotenv').config();
 
 // conectar la base de datos //
-const sequelize = new Sequelize(
-    'Backend_TPO_Mari_Sam', //nombre de la base de datos
-    'marisa', // usuario
-    'admin', // contraseña
-    {
-        host: 'localhost',  // Cambia 'localhost' si tu servidor no está en la misma máquina
-        dialect: 'mssql',
-        port: 1434,
-        dialectOptions: {
-            options: {
-                encrypt: false,
-                trustServerCertificate: true
-            }
-        },
-        logging: false,
-    });
+    const sequelize = new Sequelize(
+        'Backend_TPO_Mari_Sam', //nombre de la base de datos
+        'marisa', // usuario
+        'admin', // contraseña
+        {
+            host: 'localhost',  // Cambia 'localhost' si tu servidor no está en la misma máquina
+            dialect: 'mssql',
+            port: 1434,
+            dialectOptions: {
+                options: {
+                    encrypt: false,
+                    trustServerCertificate: true
+                }
+            },pool: {
+                max: 20,
+                min: 0,
+                acquire: 200000, // tiempo máximo para conectar
+                idle: 10000,   // tiempo de espera antes de cerrar conexión inactiva
+            },
+            logging: false,
+        });
 
 const UsuarioModel = require('./Model/Usuario');
 const ProyectoModel = require('./Model/Proyecto');

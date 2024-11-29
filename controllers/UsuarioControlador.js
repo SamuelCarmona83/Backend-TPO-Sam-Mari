@@ -150,5 +150,6 @@ module.exports = {
     loginUsuario,
     registrarUsuario,
     modificarUsuario,
-    buscarUsuarioPorNombre
+    buscarUsuarioPorNombre,
+    traerUsuario,
 };
