@@ -146,11 +146,12 @@ const agregarParticipante = async (req, res) => {
     //validando si ya esta agregado//
     const participantes = await UsuarioProyecto.findAll({where: { ProyectoID: proyectoId } });
     let participanteEncontrado = false;
-    participanteEncontrado = participantes.map(participante => {
+    participantes.map(participante => {
         if (participante.UsuarioID === usuarioId) {
-            return true
+            participanteEncontrado = true;
         }
     })
+    console.log(participanteEncontrado);
     if(participanteEncontrado){
         return res.status(400).json({
             mensaje: "Ya esta agregado"
