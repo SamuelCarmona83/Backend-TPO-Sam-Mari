@@ -1,28 +1,36 @@
 const { Sequelize } = require('sequelize');
+const bcrypt = require('bcrypt');
+require('dotenv').config();
 
 // conectar la base de datos //
-const sequelize = new Sequelize(
-    'Backend_TPO_Mari_Sam', //nombre de la base de datos
-    'marisa', // usuario
-    'admin', // contraseña
-    {
-        host: 'localhost',  // Cambia 'localhost' si tu servidor no está en la misma máquina
-        dialect: 'mssql',
-        port: 1434,
-        dialectOptions: {
-            options: {
-                encrypt: false,
-                trustServerCertificate: true
-            }
-        },
-        logging: false,
-    });
+    const sequelize = new Sequelize(
+        'Backend_TPO_Mari_Sam', //nombre de la base de datos
+        'marisa', // usuario
+        'admin', // contraseña
+        {
+            host: 'localhost',  // Cambia 'localhost' si tu servidor no está en la misma máquina
+            dialect: 'mssql',
+            port: 1434,
+            dialectOptions: {
+                options: {
+                    encrypt: false,
+                    trustServerCertificate: true
+                }
+            },pool: {
+                max: 20,
+                min: 0,
+                acquire: 200000, // tiempo máximo para conectar
+                idle: 10000,   // tiempo de espera antes de cerrar conexión inactiva
+            },
+            logging: false,
+        });
 
 const UsuarioModel = require('./Model/Usuario');
 const ProyectoModel = require('./Model/Proyecto');
 const UsuarioProyectoModel = require('./Model/UsuariosProyecto');
 const GastoModel = require('./Model/Gasto');
 const DeudaModelo = require('./Model/Deuda');
+const { hash } = require('bcrypt');
 
 const Proyecto = ProyectoModel(sequelize, Sequelize);
 const Usuario = UsuarioModel(sequelize, Sequelize);
@@ -62,9 +70,16 @@ Usuario.hasMany(Deudas, { foreignKey: 'cobradorId', as: 'deudasComoCobrador' });
 Deudas.belongsTo(Usuario, { foreignKey: 'cobradorId', as: 'cobrador' });
 Deudas.belongsTo(Gastos, {foreignKey: 'gastoID', as: 'gastoRelacionado' });
 
+const generarsalt = async () => {
+    const newSalt = await bcrypt.genSalt(10); // Genera un nuevo salt
+    return newSalt;
+}
+
 sequelize.sync()
-    .then(() => {
+    .then( async () => {
         console.log('Database & tables created!');
+        const salt = await generarsalt();
+        console.log('NuevoSalt: ' + salt);
     })
     .catch(err => {
         console.log('Error: ', err);

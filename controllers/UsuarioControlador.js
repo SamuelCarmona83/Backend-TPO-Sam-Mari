@@ -1,11 +1,13 @@
-const { where, Op } = require('sequelize');
+const { where, Op} = require('sequelize');
 const { Usuario } = require('../BD/bd');
 const bcrypt = require('bcrypt');
+const jwt = require("jsonwebtoken");
 require('dotenv').config();
 const nodemailer = require('nodemailer');
 const traerTodosLosUsuarios = async () => await Usuario.findAll();
-const traerUsuario = async (userid) => await Usuario.findOne({ where: { ID: userid } });
-
+const traerUsuario = async (ID) => {
+    return await Usuario.findByPk(ID);
+};
 const getUsuarios = async (req, res) => {// esta creo que no deberia estar // borrar luego //
     try {
         const usuarios = await traerTodosLosUsuarios();
@@ -38,29 +40,46 @@ const loginUsuario = async(req, res) =>{
         if (!usuario) {
             return res.status(404).json({ mensaje: 'Usuario no encontrado' });
         }
-        const esContraseñaValida = await bcrypt.compare(contraseña, usuario.contraseña);
-        if (!esContraseñaValida) {
+        
+        const claveHash = await bcrypt.hash(clave, process.env.SALT);
+        if (!(usuario.contraseña === claveHash)) {
             return res.status(401).json({ mensaje: 'Clave incorrecta' });
         }
 
-        res.status(200).json({ mensaje: 'Inicio de sesión exitoso', usuario: usuario });
+        const token = jwt.sign(
+            { id: usuario.ID, email: usuario.email }, 
+            process.env.KEY,                          
+            { expiresIn: "8h" }                       
+        );
+
+        res.status(200).json({
+            mensaje: 'Inicio de sesión exitoso',
+            token,
+            usuario: {
+                id: usuario.ID,
+                nombre: usuario.nombre,
+                email: usuario.email,
+            },
+        });
+        
     } catch (error) {
         console.error('Error al iniciar sesión:', error);
-        res.status(500).json({ error: 'Error al iniciar sesión' });
+        res.status(500).json({ mensaje: 'Error al iniciar sesión' });
     }
 }
 
 const registrarUsuario = async(req, res) => {
-    const {email, contraseña, nombre} = req.body;
+    const {email, clave, nombre} = req.body;
 
     try {
         const usuarioExistente = await Usuario.findOne({ where: { email } });
+        
         if (usuarioExistente) {
             return res.status(400).json({ mensaje: 'El usuario ya está registrado' });
         }
-
-        const contraseñaHash = await bcrypt.hash(contraseña, process.env.SALT);
-
+        
+        const contraseñaHash = await bcrypt.hash(clave, process.env.SALT);
+        
         await Usuario.create({nombre: nombre, email: email, contraseña: contraseñaHash, imagen: ""});
 
         res.status(200).json({
@@ -69,30 +88,34 @@ const registrarUsuario = async(req, res) => {
 
     } catch (error) {
         console.error('Error al registrar el usuario:', error);
-        res.status(500).json({ error: 'Error al registrar el usuario' });
+        res.status(500).json({ error: 'Error al registrar el usuario  ' + error});
     }
     
 }
 
 const modificarUsuario = async (req, res) => {// por ahora lo hare sin el tema de la imagen
-    const {nombre, email, contraseña, ID} = req.body;
+    const {nombre, email, clave, ID, imagen} = req.body;
 
     try{
-        const usuarioAModificar = traerUsuario(ID);
-        if(!usuarioAModificar){
-            return res.status(400).json({mensaje: "El usuario no existe"})
+        const usuarioAModificar = await traerUsuario(ID);
+        if (!usuarioAModificar && typeof usuarioAModificar.save !== 'function') {
+            return res.status(400).json({ mensaje: "El usuario no existe o no se puede modificar" });
         }
-        if(nombre){
+        if(nombre && typeof nombre == "string"){
             usuarioAModificar.nombre = nombre;
         }
-        if(email){
+        if(email && typeof email == "string"){
             usuarioAModificar.email = email;
         }
-        if(contraseña){
-            const contraseñaHash = await bcrypt.hash(contraseña, process.env.SALT);
+        if(clave && typeof clave == "string"){
+            const contraseñaHash = await bcrypt.hash(clave, process.env.SALT);
             usuarioAModificar.contraseña = contraseñaHash;
         }
-        res.status(200).json({mensaje: "Se modifico correctamente el usuario" + nombre});
+        if(imagen && typeof imagen == "string"){
+            usuarioAModificar.imagen = imagen;
+        }
+        await usuarioAModificar.save();
+        res.status(200).json({mensaje: "Se modifico correctamente el usuario: " + usuarioAModificar.nombre});
     }catch(error){
         console.error('Error al modificar el usuario:', error);
         res.status(500).json({ error: 'Error al modificar el usuario' });
@@ -101,11 +124,9 @@ const modificarUsuario = async (req, res) => {// por ahora lo hare sin el tema d
 
 const buscarUsuarioPorNombre = async (req, res) => {
     const { nombre } = req.body; 
-
     if (!nombre) {
         return res.status(400).json({ mensaje: 'Debes proporcionar un nombre para buscar' });
     }
-
     try {
         const usuarios = await Usuario.findAll({
             where: {
@@ -177,4 +198,5 @@ module.exports = {
     modificarUsuario,
     buscarUsuarioPorNombre,
     recuperarContraseña,
+    traerUsuario,
 };
