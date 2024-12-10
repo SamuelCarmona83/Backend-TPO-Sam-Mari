@@ -1,29 +1,22 @@
-const { Proyecto, UsuarioProyecto, Deudas, Gastos} = require('../BD/bd');
+const { Proyecto, UsuarioProyecto, Deudas, Gastos, Usuario} = require('../BD/bd');
 const { Op } = require('sequelize');
 const {traerUsuario} = require('../controllers/UsuarioControlador');
+const { json } = require('express');
+const Gasto = require('../BD/Model/Gasto');
+const Deuda = require('../BD/Model/Deuda');
 const proyectosDelUsuario = async (UsuarioID) => await UsuarioProyecto.findAll({where:{UsuarioID: UsuarioID}});
 const traerProyecto = async (proyectoID) => await Proyecto.findOne({ where: { ID: proyectoID } });
 
 const getProyectos = async (req, res) => {
     const UsuarioID = Number(req.query.usuarioId || req.params.usuarioId);
     try {
-        const proyectosID = await proyectosDelUsuario(UsuarioID);
-        const ids = proyectosID.map(proyecto => proyecto.ProyectoID);
-
-        // Realizas la consulta para obtener todos los proyectos cuyo ID esté en la lista
-        const proyectos = await Proyecto.findAll({
-            where: {
-                ID: {
-                    [Op.in]: ids // Busca proyectos cuyo ID esté en la lista de IDs
-                }
-            }
-        });
-
-        res.status(200).json(proyectos);
+        const proyectos = await AuxTraerProyectos(UsuarioID);
+        res.status(200).json(proyectos);        
     } catch (err) {
         res.status(500).json({
             mensaje: err.message
         });
+        console.log("### ERROR ### EN EL TRY DE GETPROYECTOS:  " + err.message);
     }
 }
 
@@ -171,6 +164,75 @@ const agregarParticipante = async (req, res) => {
         });
     }
 }
+// Refactoring para utilizar menos llamadas en el front //
+
+const AuxTraerProyectos = async (usuarioID) => {
+    const proyectosID = await proyectosDelUsuario(usuarioID);
+    const ids = proyectosID.map(proyecto => proyecto.ProyectoID);
+    const proyectos = await Proyecto.findAll({
+        where: {
+            ID: {
+                [Op.in]: ids // Filtrar proyectos con IDs en la lista
+            }
+        }
+    });
+
+    const gastosDelProyecto = await Gastos.findAll({
+        where: {
+            proyectoID: {
+                [Op.in]: ids 
+            }
+        }
+    });
+
+    const deudasDelProyecto = await Deudas.findAll({
+        where: {
+            proyectoId: {
+                [Op.in]: ids 
+            }
+        }
+    });
+
+    const relacionesUsuarioProyecto = await UsuarioProyecto.findAll({
+        where: {
+            ProyectoID: {
+                [Op.in]: ids 
+            }
+        },
+        attributes: ['UsuarioID', 'ProyectoID'] // Limita los atributos a los necesarios
+    });
+
+
+    const usuariosIDs = [...new Set(relacionesUsuarioProyecto.map(rel => rel.UsuarioID))];
+    const usuarios = await Usuario.findAll({
+        where: {
+            ID: {
+                [Op.in]: usuariosIDs
+            }
+        }
+    });
+
+    const respuesta = proyectos.map(proyecto => {
+        // Filtra las relaciones correspondientes a este proyecto
+        const usuariosRelacionados = relacionesUsuarioProyecto
+            .filter(rel => rel.ProyectoID === proyecto.ID)
+            .map(rel => usuarios.find(usuario => usuario.ID === rel.UsuarioID)); // Asocia los usuarios
+        
+        const gastosRelacionados = gastosDelProyecto.filter(gasto => gasto.proyectoID === proyecto.ID);
+
+        const deudasRelacionadas = deudasDelProyecto.filter(deuda => deuda.proyectoId === proyecto.ID);
+
+        return {
+            ...proyecto.toJSON(), // Copia los datos del proyecto
+            usuarios: usuariosRelacionados, // Agrega los usuarios relacionados
+            gastos: gastosRelacionados, // Agrega los gastos relacionados
+            deudas: deudasRelacionadas // Agrega las deudas relacionadas
+        };
+    });
+
+    return respuesta; // Devuelve la lista de proyectos con usuarios
+};
+
 
 module.exports = {
     getProyectos,

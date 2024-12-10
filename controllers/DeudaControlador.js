@@ -201,6 +201,32 @@ const obtenerDeudasUsuarioPorProyecto = async (req, res) => {
     }
 };
 
+const obtenerDeudasPorProyecto = async (req, res) => {
+    const proyectoId = Number(req.params.proyectoId);
+
+    try {
+        if (isNaN(proyectoId)) {
+            return res.status(400).json({ mensaje: "proyectoId debe ser un número válido" });
+        }
+
+        // Buscar todas las deudas relacionadas con el proyecto
+        const deudas = await Deudas.findAll({
+            where: {
+                proyectoId: Number(proyectoId),
+            },
+        });
+
+        if (deudas.length === 0) {
+            return res.status(404).json({ mensaje: "No se encontraron deudas para el proyecto especificado" });
+        }
+
+        res.status(200).json(deudas);
+    } catch (error) {
+        res.status(500).json({
+            mensaje: "Error al obtener las deudas del proyecto: " + error.message,
+        });
+    }
+};
 
 
 module.exports = {
@@ -210,5 +236,6 @@ module.exports = {
     actualizarImagenDeDeuda,
     obtenerDeudasEntreUsuarios,
     marcarDeudaComoPagada,
-    obtenerDeudasUsuarioPorProyecto
+    obtenerDeudasUsuarioPorProyecto,
+    obtenerDeudasPorProyecto
 };

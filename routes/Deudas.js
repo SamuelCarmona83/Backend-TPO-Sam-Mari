@@ -9,5 +9,6 @@ router.post('/cambiarImagen/:deudaID',validarJWT, deudaControlador.actualizarIma
 router.post('/deudasEntreUsuarios',validarJWT, deudaControlador.obtenerDeudasEntreUsuarios);
 router.put('/pagarDeuda/:deudaID',validarJWT, deudaControlador.marcarDeudaComoPagada);
 router.get('/deudasUsuarioPorProyecto/:proyectoId/:usuarioId',validarJWT, deudaControlador.obtenerDeudasUsuarioPorProyecto);
+router.get('/deudasDelProyecto/:proyectoId', validarJWT, deudaControlador.obtenerDeudasPorProyecto);
 
 module.exports = router;
