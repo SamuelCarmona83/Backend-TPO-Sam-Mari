@@ -13,6 +13,8 @@ module.exports = (sequelize) => {
             imagen: DataTypes.STRING,
             email: DataTypes.STRING,
             contraseña: DataTypes.STRING,
+            edad: DataTypes.INTEGER,
+            fechaNacimiento: DataTypes.STRING
         }
     );
 

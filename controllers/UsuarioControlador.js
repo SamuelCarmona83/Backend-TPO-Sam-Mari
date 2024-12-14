@@ -59,6 +59,9 @@ const loginUsuario = async(req, res) =>{
                 id: usuario.ID,
                 nombre: usuario.nombre,
                 email: usuario.email,
+                edad: usuario.edad,
+                fechaNacimiento: usuario.fechaNacimiento,
+                imagen: usuario.imagen
             },
         });
         
