@@ -1,11 +1,12 @@
-const { Gastos } = require('../BD/bd');
+const { Gastos, Deudas } = require('../BD/bd');
 const {traerUsuario} = require('./UsuarioControlador');
 const {traerProyecto} = require('./ProyectoControlador');
 const {eliminarDeudasDeUnGasto} = require('./DeudaControlador')
 const jwt = require('jsonwebtoken');
+const { crearDeudaPorNuevoGasto } = require('../servicios/Fabrica');
 
 const crearGasto = async (req,res) => {
-    const {monto, imagen, descripcion, usuarioID, proyectoID} = req.body;
+    const {monto, imagen, descripcion, usuarioID, proyectoID, participantes} = req.body;
 
     try {
         if (isNaN(usuarioID)) {
@@ -26,13 +27,27 @@ const crearGasto = async (req,res) => {
         if (isNaN(montoDecimal) || montoDecimal <= 0) {
             return res.status(400).json({ mensaje: "monto debe ser un número válido mayor a 0" });
         }
-        await Gastos.create({
+
+        let nuevoGasto = await Gastos.create({
             monto: montoDecimal,
             imagen,
             descripcion,
             usuarioID,
             proyectoID,
         });
+
+        let deudasDelUsuario = await Deudas.findAll({
+            where:{
+                proyectoId: proyectoID,
+                deudorId: usuarioID,
+            },
+            order: [['monto', 'DESC']],
+        });
+
+        for(let participante of participantes){
+            await crearDeudaPorNuevoGasto(nuevoGasto, deudasDelUsuario, participante.porcentaje, participante.ID);
+        }
+
 
         res.status(200).json({mensaje: "Se creo correctamente el gasto"});
     } catch (error){

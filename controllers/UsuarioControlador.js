@@ -1,8 +1,8 @@
 const { where, Op} = require('sequelize');
 const { Usuario } = require('../BD/bd');
+require('dotenv').config();
 const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken");
-require('dotenv').config();
 const nodemailer = require('nodemailer');
 const traerTodosLosUsuarios = async () => await Usuario.findAll();
 const traerUsuario = async (ID) => {
@@ -131,6 +131,7 @@ const buscarUsuarioPorNombre = async (req, res) => {
         return res.status(400).json({ mensaje: 'Debes proporcionar un nombre para buscar' });
     }
     try {
+        console.log("controllers/UsuarioControlador> nombre: " + nombre);
         const usuarios = await Usuario.findAll({
             where: {
                 [Op.or]: [
@@ -142,6 +143,7 @@ const buscarUsuarioPorNombre = async (req, res) => {
         if (usuarios.length === 0) {
             return res.status(404).json({ mensaje: 'No se encontraron usuarios con ese criterio' });
         }
+
 
         res.status(200).json(usuarios);
     } catch (err) {
