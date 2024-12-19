@@ -131,7 +131,6 @@ const buscarUsuarioPorNombre = async (req, res) => {
         return res.status(400).json({ mensaje: 'Debes proporcionar un nombre para buscar' });
     }
     try {
-        console.log("controllers/UsuarioControlador> nombre: " + nombre);
         const usuarios = await Usuario.findAll({
             where: {
                 [Op.or]: [

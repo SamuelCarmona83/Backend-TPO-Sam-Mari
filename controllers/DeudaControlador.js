@@ -149,7 +149,6 @@ const obtenerDeudasEntreUsuarios = async (req, res) => {
 
 const marcarDeudaComoPagada = async (req, res) => {
     const deudaID = Number(req.params.deudaID || req.query.deudaID);
-
     try {
         if (isNaN(deudaID)) {
             return res.status(400).json({ mensaje: "deudaID debe ser un número válido" });
