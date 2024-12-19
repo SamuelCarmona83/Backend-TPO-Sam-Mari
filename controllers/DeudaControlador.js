@@ -149,6 +149,7 @@ const obtenerDeudasEntreUsuarios = async (req, res) => {
 
 const marcarDeudaComoPagada = async (req, res) => {
     const deudaID = Number(req.params.deudaID || req.query.deudaID);
+    const {imagenUrl} = req.body;
     try {
         if (isNaN(deudaID)) {
             return res.status(400).json({ mensaje: "deudaID debe ser un número válido" });
@@ -164,6 +165,7 @@ const marcarDeudaComoPagada = async (req, res) => {
         }
 
         deuda.pagada = true;
+        deuda.imagen = imagenUrl;
         await deuda.save();
 
         res.status(200).json({ mensaje: "Deuda marcada como pagada con éxito", deuda });
