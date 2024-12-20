@@ -6,7 +6,7 @@ require('dotenv').config();
 // Configura CORS para permitir todas las solicitudes desde cualquier origen
 app.use(cors()); // Permite solicitudes de cualquier dominio por defecto
 
-const PORT = 8080;
+const PORT = parseInt(process.env.PORT) || 8080;
 app.use(express.json());
 
 app.get('/', (req, res) => {

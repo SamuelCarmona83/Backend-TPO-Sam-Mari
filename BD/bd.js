@@ -4,26 +4,28 @@ require('dotenv').config();
 
 // conectar la base de datos //
     const sequelize = new Sequelize(
-        'Backend_TPO_Mari_Sam', //nombre de la base de datos
-        'marisa', // usuario
-        'admin', // contraseña
+        process.env.DB_NAME || 'example', // nombre de la base de datos
+        process.env.DB_USER || 'postgres', // usuario
+        process.env.DB_PASSWORD || 'postgres', // contraseña
         {
-            host: 'localhost',  // Cambia 'localhost' si tu servidor no está en la misma máquina
-            dialect: 'mssql',
-            port: 1434,
+            host: process.env.DB_HOST || 'localhost', // Cambia 'localhost' si tu servidor no está en la misma máquina
+            dialect: 'postgres',
+            port: process.env.DB_PORT || 5432,
             dialectOptions: {
-                options: {
-                    encrypt: false,
-                    trustServerCertificate: true
-                }
-            },pool: {
+                ssl: process.env.DB_SSL === 'true' ? {
+                    require: true,
+                    rejectUnauthorized: false
+                } : false
+            },
+            pool: {
                 max: 20,
                 min: 0,
                 acquire: 200000, // tiempo máximo para conectar
-                idle: 10000,   // tiempo de espera antes de cerrar conexión inactiva
+                idle: 10000, // tiempo de espera antes de cerrar conexión inactiva
             },
             logging: false,
-        });
+        }
+    );
 
 const UsuarioModel = require('./Model/Usuario');
 const ProyectoModel = require('./Model/Proyecto');
@@ -75,7 +77,9 @@ const generarsalt = async () => {
     return newSalt;
 }
 
-sequelize.sync()
+sequelize.sync({
+    alter: true
+})
     .then( async () => {
         console.log('Database & tables created!');
         const salt = await generarsalt();
