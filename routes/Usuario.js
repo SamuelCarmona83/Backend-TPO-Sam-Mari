@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const UsuarioControlador = require('../controllers/UsuarioControlador');
-const Usuario = require('../BD/Model/Usuario');
+const Usuario = require('../db/Model/Usuario');
 const {validarJWT} = require('../middelwares/jwtValidador');
 
 

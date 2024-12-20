@@ -1,5 +1,5 @@
 const { where } = require('sequelize');
-const { Deudas } = require('../BD/bd');
+const { Deudas } = require('../db/bd');
 
 const pagarDeudaPorID = async (deudaID) => {
     try{

@@ -1,5 +1,5 @@
 const { where, Op} = require('sequelize');
-const { Usuario } = require('../BD/bd');
+const { Usuario } = require('../db/bd');
 require('dotenv').config();
 const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken");

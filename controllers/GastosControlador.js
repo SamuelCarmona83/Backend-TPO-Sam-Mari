@@ -1,4 +1,4 @@
-const { Gastos, Deudas } = require('../BD/bd');
+const { Gastos, Deudas } = require('../db/bd');
 const {traerUsuario} = require('./UsuarioControlador');
 const {traerProyecto} = require('./ProyectoControlador');
 const {eliminarDeudasDeUnGasto} = require('./DeudaControlador')

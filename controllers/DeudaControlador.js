@@ -1,7 +1,7 @@
-const { Deudas } = require('../BD/bd');
+const { Deudas } = require('../db/bd');
 const {traerUsuario} = require('../controllers/UsuarioControlador');
 const {traerProyecto} = require('../controllers/ProyectoControlador');
-const { Gastos } = require('../BD/bd');
+const { Gastos } = require('../db/bd');
 const traerGasto = async (gastoID) => await Gastos.findByPk(gastoID);
 
 const crearDeuda = async (req, res) => {

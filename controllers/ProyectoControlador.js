@@ -1,9 +1,9 @@
-const { Proyecto, UsuarioProyecto, Deudas, Gastos, Usuario} = require('../BD/bd');
+const { Proyecto, UsuarioProyecto, Deudas, Gastos, Usuario} = require('../db/bd');
 const { Op } = require('sequelize');
 const {traerUsuario} = require('../controllers/UsuarioControlador');
 const { json } = require('express');
-const Gasto = require('../BD/Model/Gasto');
-const Deuda = require('../BD/Model/Deuda');
+const Gasto = require('../db/Model/Gasto');
+const Deuda = require('../db/Model/Deuda');
 const proyectosDelUsuario = async (UsuarioID) => await UsuarioProyecto.findAll({where:{UsuarioID: UsuarioID}});
 const traerProyecto = async (proyectoID) => await Proyecto.findOne({ where: { ID: proyectoID } });
 

@@ -1,5 +1,5 @@
 const { where, Op} = require('sequelize');
-const { Deudas } = require('../BD/bd');
+const { Deudas } = require('../db/bd');
 const { pagarDeudaPorID, cambiarMontoPorID } = require('./DeudaServicio');
 require('dotenv').config();
 
