@@ -12,7 +12,7 @@
 	"forwardPorts": [3000, 5432, 5001, 5000, 9000, 9001],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "npm install && cp .env.example .env",
+	"postCreateCommand": "./post-create.sh",
 
 	// Configure tool-specific properties.
 	// "customizations": {},
@@ -22,7 +22,9 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"lefd.sweetdracula-monokai"
+				"lefd.sweetdracula-monokai",
+				"GitHub.copilot-chat",
+				"GitHub.copilot"
 			],
 			"settings": {
 				"workbench.colorTheme": "Sweet Dracula Monokai",
