@@ -12,7 +12,7 @@
 	"forwardPorts": [3000, 5432, 5001, 5000, 9000, 9001],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "./post-create.sh",
+	"postCreateCommand": "npm install && cp .env.example .env && git config --global --add safe.directory /workspaces/Backend-TPO-Sam-Mari",
 
 	// Configure tool-specific properties.
 	// "customizations": {},
